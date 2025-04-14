@@ -1,0 +1,13 @@
+<form id="tokenForm">
+  <input type="text" id="accessToken" placeholder="Strava Access Token" required />
+  <input type="date" id="startDate" required />
+  <input type="date" id="endDate" required />
+  <button type="submit">Fetch Data</button>
+</form>
+
+<div id="alertBox" style="display:none; background:#fff3cd; padding:1em; margin:1em 0;"></div>
+
+<div id="charts"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="FrontEnd.js"></script>
