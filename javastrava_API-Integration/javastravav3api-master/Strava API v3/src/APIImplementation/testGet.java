@@ -5,6 +5,5 @@ public class testGet {
         Authorization auth = new Authorization();
 
         System.out.println("Name: " + auth.getName());
-        System.out.println("City: " + auth.getCity());
     }
 }

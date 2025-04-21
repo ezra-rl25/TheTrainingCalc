@@ -26,11 +26,11 @@
 		</snapshotRepository>
 	</distributionManagement>
 	<build>
-		<sourceDirectory>src</sourceDirectory>
-		<directory>target</directory>
+		<sourceDirectory></sourceDirectory>
+		<directory>../../../../target</directory>
 		<resources>
 			<resource>
-				<directory>src/</directory>
+				<directory></directory>
 				<includes>
 					<include>*.properties</include>
 					<include>log4j2.xml</include>
