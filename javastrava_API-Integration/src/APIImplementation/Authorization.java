@@ -56,6 +56,7 @@ public class Authorization {
         return athlete.getFirstname() + " " + athlete.getLastname();
     }
 
+
     private boolean isExpired(TokenResponse token) {
         long now = System.currentTimeMillis() / 1000L;
         return token.getExpiresAt() < now;
