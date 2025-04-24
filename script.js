@@ -1,68 +1,104 @@
-async function fetchTrainingData() {
-  const token = document.getElementById('tokenInput').value;
-  const start = document.getElementById('startDate').value;
-  const end = document.getElementById('endDate').value;
+const metrics = [
+  {
+    id: "acuteLoad",
+    name: "Acute Load",
+    chartType: "bar",
+    description: "Measures recent training volume (last 7 days)",
+    color: "rgba(75, 192, 192, 0.7)"
+  },
+  {
+    id: "chronicLoad",
+    name: "Chronic Load",
+    chartType: "line",
+    description: "Measures long-term fitness base (last 28 days)",
+    color: "rgba(153, 102, 255, 0.7)"
+  },
+  {
+    id: "trimp",
+    name: "TRIMP",
+    chartType: "line",
+    description: "Intensity-adjusted training stress",
+    color: "rgba(255, 99, 132, 0.7)"
+  },
+  {
+    id: "weeklyElevation",
+    name: "Weekly Elevation Gain",
+    chartType: "bar",
+    description: "Total elevation climbed weekly",
+    color: "rgba(255, 206, 86, 0.7)"
+  },
+  {
+    id: "tsb",
+    name: "Training Stress Balance (TSB)",
+    chartType: "line",
+    description: "Indicates fatigue vs readiness",
+    color: "rgba(54, 162, 235, 0.7)"
+  }
+];
 
-  const response = await fetch(`https://your-backend-api.com/training-data?token=${token}&start=${start}&end=${end}`);
-  const data = await response.json();
+const graphsContainer = document.getElementById("graphsContainer");
+const metricToggles = document.getElementById("metricToggles");
+let chartInstances = {};
 
-  updateCharts(data);
-  updateAlerts(data);
-}
+fetch("data/metrics.json")
+  .then(res => res.json())
+  .then(data => {
+    metrics.forEach(metric => {
+      // Create checkbox
+      const toggle = document.createElement("div");
+      toggle.classList.add("metric-toggle");
+      toggle.innerHTML = `
+        <input type="checkbox" id="${metric.id}" />
+        <label for="${metric.id}" title="${metric.description}">${metric.name}</label>
+      `;
+      metricToggles.appendChild(toggle);
 
-function updateCharts(data) {
-  const acrCtx = document.getElementById('acrChart').getContext('2d');
-  const weeklyLoadCtx = document.getElementById('weeklyLoadChart').getContext('2d');
+      document.getElementById(metric.id).addEventListener("change", (e) => {
+        if (e.target.checked) {
+          drawChart(metric, data[metric.id]);
+        } else {
+          destroyChart(metric.id);
+        }
+      });
+    });
+  });
 
-  new Chart(acrCtx, {
-    type: 'line',
+function drawChart(metric, dataPoints) {
+  const canvas = document.createElement("canvas");
+  canvas.id = `${metric.id}-chart`;
+  graphsContainer.appendChild(canvas);
+
+  const ctx = canvas.getContext("2d");
+  chartInstances[metric.id] = new Chart(ctx, {
+    type: metric.chartType,
     data: {
-      labels: data.acr.dates,
+      labels: dataPoints.map(d => d.date),
       datasets: [{
-        label: 'ACR',
-        data: data.acr.values,
-        borderColor: '#3e95cd',
-        fill: false
+        label: metric.name,
+        data: dataPoints.map(d => d.value),
+        backgroundColor: metric.color,
+        borderColor: metric.color,
+        fill: true
       }]
     },
     options: {
       responsive: true,
-      scales: { y: { beginAtZero: true } }
-    }
-  });
-
-  new Chart(weeklyLoadCtx, {
-    type: 'bar',
-    data: {
-      labels: data.weeklyLoad.dates,
-      datasets: [{
-        label: 'Weekly Load',
-        data: data.weeklyLoad.values,
-        backgroundColor: '#8e5ea2'
-      }]
-    },
-    options: {
-      responsive: true,
-      scales: { y: { beginAtZero: true } }
+      plugins: {
+        tooltip: {
+          mode: 'index',
+          intersect: false
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
     }
   });
 }
 
-function updateAlerts(data) {
-  const alertsDiv = document.getElementById('alerts');
-  alertsDiv.style.display = 'block';
-
-  let alerts = [];
-
-  if (data.acr.values.some(val => val > 1.5)) {
-    alerts.push("⚠️ ACR exceeds 1.5. High injury risk detected!");
-  }
-
-  if (data.restDays < 2) {
-    alerts.push("💤 Not enough rest days. Consider adding rest to avoid fatigue.");
-  }
-
-  alertsDiv.innerHTML = alerts.length
-    ? alerts.map(alert => `<p>${alert}</p>`).join('')
-    : "<p>No current alerts. Keep up the good work!</p>";
+function destroyChart(id) {
+  chartInstances[id]?.destroy();
+  document.getElementById(`${id}-chart`)?.remove();
 }
