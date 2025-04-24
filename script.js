@@ -44,7 +44,6 @@ fetch("data/metrics.json")
   .then(res => res.json())
   .then(data => {
     metrics.forEach(metric => {
-      // Create checkbox
       const toggle = document.createElement("div");
       toggle.classList.add("metric-toggle");
       toggle.innerHTML = `
