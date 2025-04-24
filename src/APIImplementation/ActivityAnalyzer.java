@@ -31,12 +31,12 @@ public class ActivityAnalyzer {
 
     public void updateWeeklyMetrics(LocalDateTime endOfWeek) {
         List<StravaActivity> activities = getActivitiesInWeek(endOfWeek);
+        totalElevation=0;
+        totalDistance=0;
+        totalMovingTime=0;
+        acuteLoad=0;
+        trimp=0;
         for (StravaActivity act : activities) {
-            totalElevation=0;
-            totalDistance=0;
-            totalMovingTime=0;
-            acuteLoad=0;
-            trimp=0;
             totalElevation += act.getTotalElevationGain();
             totalDistance += act.getDistance();
             totalMovingTime += act.getMovingTime();
@@ -47,12 +47,12 @@ public class ActivityAnalyzer {
 
     public void updateMonthlyMetrics(LocalDateTime endOfMonth) {
         List<StravaActivity> activities = getActivitiesInMonth(endOfMonth);
+        totalElevation=0;
+        totalDistance=0;
+        totalMovingTime=0;
+        chronicLoad=0;
+        trimp=0;
         for (StravaActivity act : activities) {
-            totalElevation=0;
-            totalDistance=0;
-            totalMovingTime=0;
-            chronicLoad=0;
-            trimp=0;
             totalElevation += act.getTotalElevationGain();
             totalDistance += act.getDistance();
             totalMovingTime += act.getMovingTime();

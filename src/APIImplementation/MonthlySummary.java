@@ -1,5 +1,9 @@
 package APIImplementation;
 
+import javastrava.service.Strava;
+
+import java.time.LocalDateTime;
+
 public class MonthlySummary {
     private double totalDistance = 0;
     private double totalMovingTime = 0;
@@ -14,19 +18,19 @@ public class MonthlySummary {
     public MonthlySummary (){
     }
 
-    public void updateMonthlySummary (){
-        ActivityAnalyzer analyzer=new ActivityAnalyzer();
-        analyzer.updateMonthlyMetrics();
+    public void updateMonthlySummary (LocalDateTime endOfMonth, Strava api){
+        ActivityAnalyzer analyzer=new ActivityAnalyzer(api);
+        analyzer.updateMonthlyMetrics(endOfMonth);
         totalDistance=analyzer.getTotalDistance();
         totalMovingTime=analyzer.getTotalMovingTime();
         totalElevation=analyzer.getTotalElevation();
         chronicLoad=analyzer.getChronicLoad();
-        trimp=analyzer.getMonthlyTrimp();
-        analyzer.updateWeeklyMetrics();
+        trimp=analyzer.getMonthlyTrimp(endOfMonth);
+        analyzer.updateWeeklyMetrics(endOfMonth);
         acuteLoad= analyzer.getAcuteLoad();
-        acr=analyzer.getACR();
-        tsb=analyzer.getTSB();
-        consistency=analyzer.getMonthConsistency();
+        acr=analyzer.getACR(endOfMonth);
+        tsb=analyzer.getTSB(endOfMonth);
+        consistency=analyzer.getMonthConsistency(endOfMonth);
     }
 
 }
